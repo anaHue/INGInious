@@ -46,9 +46,9 @@ def _start_frontend(config, host, port, ssh_port):
 
         def run(self):
             try:
-                server.start()
+                server.serve_forever()
             except:
-                server.stop()
+                pass
 
     thread = FrontendThread()
     thread.start()
@@ -65,25 +65,19 @@ def _drop_database(config):
 class SeleniumTest(unittest.TestCase):
     def setUp(self):
         self.frontend_config = {
-            "backend": "remote",
-            "docker_daemons": [{
-                "remote_host": "192.168.59.103",
-                "remote_docker_port": 2375,
-                "remote_agent_port": 63456
-            }],
+            "backend": "local",
             "mongo_opt": {"host": "localhost", "database": "INGIniousFrontendTest"},
             "tasks_directory": "./inginious/tasks",
-            "containers": {
-                "default": "ingi/inginious-c-default",
-                "sekexe": "ingi/inginious-c-sekexe",
-            },
             "superadmins": ["test"],
             "plugins": [
-                {
-                    "plugin_module": "inginious.frontend.plugins.auth.demo_auth",
-                    "users": {"test": "test", "test2": "test", "test3": "test"}
-                }
-            ]
+
+            ],
+            "session_parameters": {
+                "timeout": 86400,
+                "ignore_change_ip": False,
+                "secure": False,
+                "secret_key": "cc399b79fbdc91ae377207bc994d1b1f0a48cce9fca82ce997802a98d587f97a"
+            }
         }
 
         if TEST_ENV == "boot2docker":
