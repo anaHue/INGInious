@@ -6,6 +6,7 @@
 import re
 import flask
 
+from inginious.common.base import dict_from_prefix, id_checker
 from inginious.frontend.accessible_time import AccessibleTime
 from inginious.frontend.pages.course_admin.utils import INGIniousAdminPage
 
@@ -97,9 +98,41 @@ class CourseSettingsPage(INGIniousAdminPage):
             self.course_factory.update_course_descriptor_content(courseid, course_content)
             errors = None
             course, __ = self.get_course_and_check_rights(courseid, allow_all_staff=False)  # don't forget to reload the modified course
-
+        self.define_tags(course)
         return self.page(course, errors, errors is None)
 
     def page(self, course, errors=None, saved=False):
         """ Get all data and display the page """
         return self.template_helper.render("course_admin/settings.html", course=course, errors=errors, saved=saved)
+
+    def define_tags(self, course):
+        print("WE DEFINE TAGS")
+        # Tags
+        tags = dict_from_prefix("tags", flask.request.form)
+        if tags is None:
+            tags = {}
+
+        tags_id = [tag["id"] for key, tag in tags.items() if tag["id"]]
+
+        if len(tags_id) != len(set(tags_id)):
+            return self.page(course, False, _("Some tags have the same id! The id of a tag must be unique."))
+
+        tags = {tag["id"]: tag for key, tag in tags.items() if tag["id"]}
+
+        # Repair tags
+        for key, tag in tags.items():
+            # Since unchecked checkboxes are not present here, we manually add them to avoid later errors
+            tag["visible"] = "visible" in tag
+            tag["type"] = int(tag["type"])
+
+            if (tag["id"] == "" and tag["type"] != 2) or tag["name"] == "":
+                return self.page(course, False, _("Some tag fields were missing."))
+
+            if not id_checker(tag["id"]):
+                return self.page(course, False, _("Invalid tag id: {}").format(tag["id"]))
+
+            del tag["id"]
+
+        course_content = self.course_factory.get_course_descriptor_content(course.get_id())
+        course_content["tags"] = tags
+        self.course_factory.update_course_descriptor_content(course.get_id(), course_content)
