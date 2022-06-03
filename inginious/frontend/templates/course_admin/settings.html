@@ -376,7 +376,9 @@
                     </button>
                 </div>
             {% endif %}
-
+            <div class="btn-group btn-group-sm pull-right">
+                <button type="button" class="mt-3 btn btn-info btn-block" onclick="studio_add_tag_line(-1)"><i class="fa fa-plus fa-lg"></i> {{ _("New tag") }}</button>
+            </div>
             <table id="table" class="table">
                 <thead class="table-borderless">
                     <tr>
@@ -425,9 +427,6 @@
                 {% endfor %}
                 </tbody>
             </table>
-
-            <button type="button" class="mt-3 btn btn-info btn-block" onclick="studio_add_tag_line(-1)"><i class="fa fa-plus fa-lg"></i> {{ _("New tag") }}</button>
-
             </div>
         </div>
         <button class="btn btn-primary btn-block" type="submit"><i class="fa fa-download"></i> {{ _("Save changes") }}</button>
