@@ -95,6 +95,10 @@ class CourseSettingsPage(INGIniousAdminPage):
             tag_error = self.define_tags(course, data, course_content)
             if tag_error is not None:
                 errors.append(tag_error)
+
+            additional_fields_error = self.define_additionnal_fields(course, data, course_content)
+            if additional_fields_error is not None:
+                errors.append(additional_fields_error)
         except:
             errors.append(_('User returned an invalid form.'))
         if len(errors) == 0:
@@ -137,3 +141,6 @@ class CourseSettingsPage(INGIniousAdminPage):
 
         course_content["tags"] = tags
         self.course_factory.update_course_descriptor_content(course.get_id(), course_content)
+
+    def define_additionnal_fields(self, course, data, course_content):
+        pass

@@ -380,7 +380,7 @@
                 </div>
             {% endif %}
             <div class="btn-group btn-group-sm pull-right">
-                <button type="button" class="mt-3 btn btn-info btn-block" onclick="studio_add_tag_line(-1)"><i class="fa fa-plus fa-lg"></i> {{ _("New tag") }}</button>
+                <button type="button" class="mt-3 btn btn-info btn-block" onclick="studio_add_table_line(-1,'table','NEW')"><i class="fa fa-plus fa-lg"></i> {{ _("New tag") }}</button>
             </div>
             <table id="table" class="table">
                 <thead class="table-borderless">
@@ -417,7 +417,7 @@
                     <tr id="{{loop.index}}">
                         <td><input type="text" id="id_{{loop.index}}" class="form-control" name="tags[{{loop.index}}][id]" value="{{ key }}"/></td>
                         <td><input type="text" class="form-control" name="tags[{{loop.index}}][name]" value="{{name}}"/></td>
-                        <td><textarea class="form-control" onfocus="studio_expand_tag_description(this);" onblur="studio_expand_tag_description_not(this);" name="tags[{{loop.index}}][description]" rows="1" style="resize:none">{{description}}</textarea></td>
+                        <td><textarea class="form-control" onfocus="studio_expand_description(this);" onblur="studio_expand_description_not(this);" name="tags[{{loop.index}}][description]" rows="1" style="resize:none">{{description}}</textarea></td>
                         <td><input type="checkbox" class="form-control" name="tags[{{loop.index}}][visible]" {% if visible %} checked="checked" {% endif %}/></td>
                         <td>
                             <select class="form-control" name="tags[{{loop.index}}][type]">
@@ -442,7 +442,7 @@
                 </div>
             {% endif %}
             <div class="btn-group btn-group-sm pull-right">
-                <button type="button" class="mt-3 btn btn-info btn-block" onclick="studio_add_additional_field()"><i class="fa fa-plus fa-lg"></i> {{ _("New field") }}</button>
+                <button type="button" class="mt-3 btn btn-info btn-block" onclick="studio_add_table_line(-1,'new_fields_table','NEW_FIELD')"><i class="fa fa-plus fa-lg"></i> {{ _("New field") }}</button>
             </div>
             <table id="new_fields_table" class="table">
                 <thead class="table-borderless">
