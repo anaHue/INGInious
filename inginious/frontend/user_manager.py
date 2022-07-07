@@ -417,6 +417,10 @@ class UserManager:
             apikey = retval.get("apikey", None)
         return apikey
 
+    def get_user_custom_values(self, username):
+        user = self._database.users.find_one({"username": username})
+        return user["custom"] if "custom" in user else {}
+
     def get_user_activate_hash(self, username):
         """
         Get activate hash for a user

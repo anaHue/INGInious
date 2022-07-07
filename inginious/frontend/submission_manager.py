@@ -283,6 +283,7 @@ class WebAppSubmissionManager:
             {"random": 1, "state": 1})
         inputdata["@random"] = states["random"] if "random" in states else []
         inputdata["@state"] = states["state"] if "state" in states else ""
+        inputdata["@custom"] = self._user_manager.get_user_custom_values(username)
 
         # Send LTI information to the client except "consumer_key"
         lti_info = self._user_manager.session_lti_info()

@@ -700,6 +700,22 @@ Random inputs may also be generated if you configured it so. You can access thes
 
 Note that this returns the list of random values corresponding to the number of random inputs asked in the task configuration.
 
+Depending on the configuration of some courses, teachers may have set custom variables that students can complete. Those variables are available in the `custom` input. Those are represents with a dictionary.
+
+.. tabs::
+
+    .. code-tab:: ipython3
+
+        lang = get_input("@custom")
+
+    .. code-tab:: py
+
+        lang = input.get_input("@custom")
+
+    .. code-tab:: bash
+
+        getinput @custom
+
 Finally, note that plugins are free to add new `@`-prefixed fields to the available input using the `new_submission` hook.
 
 parsetemplate
