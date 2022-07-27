@@ -213,7 +213,7 @@ class BaseTaskPage(object):
 
             # Start the submission
             try:
-                submissionid, oldsubids = self.submission_manager.add_job(task, task_input, debug)
+                submissionid, oldsubids = self.submission_manager.add_job(task, task_input, course.get_task_dispenser(), debug)
                 return Response(content_type='application/json', response=json.dumps({
                     "status": "ok", "submissionid": str(submissionid), "remove": oldsubids,
                     "text": _("<b>Your submission has been sent...</b>")
