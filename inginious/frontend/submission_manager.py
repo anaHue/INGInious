@@ -45,7 +45,7 @@ class WebAppSubmissionManager:
         self._lti_outcome_manager = lti_outcome_manager
 
     def _job_done_callback(self, submissionid, task, result, grade, problems, tests, custom, state, archive, stdout,
-                           stderr, newsub=True):
+                           stderr, task_dispenser,  newsub=True):
         """ Callback called by Client when a job is done. Updates the submission in the database with the data returned after the completion of the
         job """
         submission = self.get_submission(submissionid, False)
@@ -84,7 +84,7 @@ class WebAppSubmissionManager:
             )
 
             for username in submission["username"]:
-                self._user_manager.update_user_stats(username, task, submission, result[0], grade, state, newsub)
+                self._user_manager.update_user_stats(username, task, submission, result[0], grade, state, newsub, task_dispenser)
 
         # Check for size as it also takes the MongoDB command into consideration
         except pymongo.errors.DocumentTooLarge:
@@ -161,7 +161,7 @@ class WebAppSubmissionManager:
 
         return self._delete_exceeding_submissions(self._user_manager.session_username(), task, task_dispenser)
 
-    def replay_job(self, task, submission, copy=False, debug=False):
+    def replay_job(self, task, submission, task_dispenser, copy=False, debug=False):
         """
         Replay a submission: add the same job in the queue, keeping submission id, submission date and input data
         :param submission: Submission to replay
@@ -213,7 +213,7 @@ class WebAppSubmissionManager:
         jobid = self._client.new_job(1, task, inputdata,
                                      (lambda result, grade, problems, tests, custom, state, archive, stdout, stderr:
                                       self._job_done_callback(submissionid, task, result, grade, problems, tests,
-                                                              custom, state, archive, stdout, stderr, copy)),
+                                                              custom, state, archive, stdout, stderr, task_dispenser, copy)),
                                      "Frontend - {}".format(submission["username"]), debug, ssh_callback)
 
 
@@ -317,7 +317,7 @@ class WebAppSubmissionManager:
         jobid = self._client.new_job(0, task, inputdata,
                                      (lambda result, grade, problems, tests, custom, state, archive, stdout, stderr:
                                       self._job_done_callback(submissionid, task, result, grade, problems, tests,
-                                                              custom, state, archive, stdout, stderr, True)),
+                                                              custom, state, archive, stdout, stderr, task_dispenser, True)),
                                      "Frontend - {}".format(username), debug, ssh_callback)
 
         self._database.submissions.update_one(
@@ -352,7 +352,7 @@ class WebAppSubmissionManager:
         # List the entries to keep
         to_keep = set([])
 
-        if task.get_evaluate() == 'best':
+        if task_dispenser.get_evaluation_mode(task.get_id()) == 'best':
             # Find the best "status"="done" and "result"="success"
             idx_best = -1
             for idx, val in enumerate(tasks):
