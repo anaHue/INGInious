@@ -36,10 +36,7 @@ install_requires = [
 ]
 
 test_requires = [
-    "selenium == 3.141.0",
-    "nose2[coverage_plugin]==0.15.1",
     "pytest == 8.3.4",
-    "pyvirtualdisplay",
     "coverage == 7.6.9"
 ]
 

@@ -53,11 +53,7 @@ jobs:
           pip3 install .
           pip3 install .[test]
 
-      - name: Launch nose tests
-        run: nose2
-
       - name: Launch pytest tests
-        if: always()
         run: coverage run -a --branch -m pytest -v
 
       - name: Generate coverage report
