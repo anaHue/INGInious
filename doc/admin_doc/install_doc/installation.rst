@@ -54,7 +54,7 @@ Or, for Fedora 34+:
 
 .. code-block:: bash
 
-    # yum install -y git gcc libtidy python3 python3-devel python3-pip zeromq-devel dnf-plugins-core
+    # yum install -y git gcc libtidy python3 python3-devel python3-pip python3-venv zeromq-devel dnf-plugins-core
     # dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
     # dnf install -y docker-ce docker-ce-cli
     # cat <<EOF > /etc/yum.repos.d/mongodb-org-7.0.repo
@@ -77,29 +77,58 @@ You can now start and enable the ``mongod`` and ``docker`` services:
     # systemctl start docker
     # systemctl enable docker
     
-Ubuntu 18.04+
+Ubuntu 22.04+
 `````````````
 
-The previously mentioned dependencies can be installed, for Ubuntu 18.04+:
+
+The previously mentioned dependencies can be installed, for Ubuntu 22.04+:
+
+As previously said, INGInious needs some specific packages. Those can simply be add by running this command:
 
 .. code-block:: bash
 
-    # apt-get update
-    # apt-get install git gcc tidy python3 python3-pip python3-dev libzmq3-dev mongodb apt-transport-https curl gnupg lsb-release
-    # curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-    # echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
-    # apt-get update
-    # apt-get install docker-ce docker-ce-cli
+    sudo apt install git gcc tidy python3-pip python3-dev python3-venv libzmq3-dev apt-transport-https
 
-You may also add ``libxmlsec1-dev libltdl-dev`` for the SAML2 auth plugin
+For Docker and MongoDB, some specific steps are needed:
+
+First, Docker:
+
+.. code-block:: bash
+
+    sudo apt install curl gnupg lsb-release
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+    echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+    sudo apt update
+    sudo apt install docker-ce docker-ce-cli
+
+Then, Mongo:
+
+.. code-block:: bash
+
+    wget -qO - https://www.mongodb.org/static/pgp/server-6.0.asc | sudo apt-key add -
+    echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/6.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-6.0.list
+    sudo apt update
+    wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2_amd64.deb
+    sudo dpkg -i libssl1.1_1.1.1f-1ubuntu2_amd64.deb
+    sudo apt install -y mongodb-org
+
+.. NOTE::
+
+    Libssl installation is a temporary fix that is not required for all versions.
+    It may not work anymore (or may not be necessary) for future versions.
+
+You may also add ``libxmlsec1-dev libltdl-dev`` for the SAML2 auth plugin.
 
 You can now start and enable the ``mongod`` and ``docker`` services:
 ::
 
-    # systemctl start mongodb
-    # systemctl enable mongodb
+    # systemctl daemon-reload
+    # systemctl start mongod
+    # systemctl enable mongod
     # systemctl start docker
     # systemctl enable docker
+
+
 
 macOS
 `````
@@ -124,8 +153,38 @@ The next step is to install `Docker for Mac <https://docs.docker.com/docker-for-
 
 .. _Installpip:
 
+**Whatever the distribution, you should make docker available for non-root user:**
+
+1. Run the ``groupadd`` command below to create a new group called ``docker``. Enter your password to continue running the command.
+
+.. code-block:: bash
+
+    sudo groupadd docker
+
+If the ``docker`` group exists in the user group, you will get a message like "group already exists".
+
+2. Next, run the ``usermod`` command below where the ``-aG`` options tell the command to add the INGInious running user ``<user>`` to the ``docker`` group.
+This command causes your user account to have non-user access.
+
+.. code-block:: bash
+
+    sudo usermod -aG docker user
+
+3. Run the ``newgrp`` command below to change the current real group ID to the ``docker`` group.
+
+.. code-block:: bash
+
+    sudo newgrp docker
+
 Installing INGInious
 --------------------
+
+To keep a clean distribution, we recommend to work with a virtualenv:
+
+.. code-block:: bash
+
+    python3 -m venv /path/to/venv/INGInious
+    source /path/to/venv/INGInious/bin/activate
 
 The recommended setup is to install INGInious via pip from PyPI.
 This allows you to use the latest supported version.
