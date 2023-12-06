@@ -9,7 +9,7 @@ INGInious
    :target: https://www.codacy.com/gh/INGInious/INGInious/dashboard?utm_source=github.com&utm_medium=referral&utm_content=INGInious/INGInious&utm_campaign=Badge_Coverage
 .. image:: https://github.com/INGInious/INGInious/actions/workflows/ci.yml/badge.svg
     :target: https://github.com/INGInious/INGInious/actions
-.. image:: https://github.com/INGInious/INGInious/actions/workflows/core_containers.yml/badge.svg
+.. image:: https://github.com/INGInious/INGInious/actions/workflows/env_containers.yml/badge.svg
     :target: https://github.com/INGInious/INGInious/actions
 .. image:: https://readthedocs.org/projects/inginious/badge/?version=latest
     :target: https://readthedocs.org/projects/inginious/?badge=latest
