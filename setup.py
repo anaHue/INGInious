@@ -61,6 +61,19 @@ scripts = [] if os.environ.get("INGINIOUS_COMPOSE") else [
     'utils/database_updater/inginious-database-update'
 ]
 
+scripts = [] if os.environ.get("INGINIOUS_COMPOSE") else [
+    'inginious-agent-docker',
+    'inginious-agent-mcq',
+    'inginious-backend',
+    'inginious-webapp',
+    'inginious-webdav',
+    'inginious-install',
+    'inginious-autotest',
+    'utils/sync/inginious-synchronize',
+    'utils/container_update/inginious-container-update',
+    'utils/database_updater/inginious-database-update'
+]
+
 # Setup
 setup(
     name="INGInious",
