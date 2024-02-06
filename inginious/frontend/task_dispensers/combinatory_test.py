@@ -47,12 +47,14 @@ class CombinatoryTest(TableOfContents):
         }
         return template_helper.render("course_admin/task_dispensers/combinatory_test.html", course=course,
                                       course_structure=self._toc, tasks=task_data, task_errors=task_errors, config_fields=config_fields,
-                                      config_items_funcs=["dispenser_util_get_" + config_item.get_id() for config_item in self.config_items])
+                                      dispenser_config=self._task_config)
 
     def render(self, template_helper, course, tasks_data, tag_list, username):
         """ Returns the formatted task list"""
+        accessibilities = course.get_task_dispenser().get_accessibilities(self._task_list_func(), [username])
         return template_helper.render("task_dispensers/toc.html", course=course, tasks=self._task_list_func(),
-                                      tasks_data=tasks_data, tag_filter_list=tag_list, sections=self._toc)
+                                      tasks_data=tasks_data, tag_filter_list=tag_list, sections=self._toc,
+                                      accessibilities=accessibilities)
 
     def check_dispenser_data(self, dispenser_data):
         """ Checks the dispenser data as formatted by the form from render_edit function """
