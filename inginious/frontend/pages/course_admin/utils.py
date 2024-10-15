@@ -367,9 +367,9 @@ class CourseRedirectPage(INGIniousAdminPage):
         """ GET request """
         course, __ = self.get_course_and_check_rights(courseid)
         if self.user_manager.session_username() in course.get_tutors():
-            return redirect(self.app.get_homepath() + '/admin/{}/tasks'.format(courseid))
+            return redirect(self.app.get_path("admin", courseid, "tasks"))
         else:
-            return redirect(self.app.get_homepath() + '/admin/{}/settings'.format(courseid))
+            return redirect(self.app.get_path("admin", courseid, "settings"))
 
     def POST_AUTH(self, courseid):  # pylint: disable=arguments-differ
         """ POST request """
