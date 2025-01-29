@@ -102,13 +102,15 @@ class EditTaskPage(INGIniousAdminPage):
             environment_type = data.get("environment_type", "")
             environment_parameters = dict_from_prefix("envparams", data).get(environment_type, {})
             environment_id = dict_from_prefix("environment_id", data).get(environment_type, "")
+            variables = dict_from_prefix("variable", data)
 
             data = {key: val for key, val in data.items() if
                     not key.startswith("problem")
                     and not key.startswith("envparams")
                     and not key.startswith("environment_id")
                     and not key.startswith("/")
-                    and not key == "@action"}
+                    and not key == "@action"
+                    and not key.startswith("variable")}
 
             data["environment_id"] = environment_id # we do this after having removed all the environment_id[something] entries
 
@@ -124,6 +126,12 @@ class EditTaskPage(INGIniousAdminPage):
             else:
                 data["problems"] = OrderedDict([(key, self.parse_problem(val))
                                                 for key, val in sorted(iter(problems.items()), key=lambda x: int(x[1]['@order']))])
+
+            if problems is None:
+                data["variables"] = OrderedDict([])
+            else:
+                data["variables"] = OrderedDict([(key, val)
+                                                for key, val in sorted(iter(variables.items()))])
 
             # Task environment parameters
             data["environment_parameters"] = environment_parameters
