@@ -98,6 +98,99 @@ class EditTaskPage(INGIniousAdminPage):
                 task_zip = None
             del data["task_file"]
 
+
+            print(data)
+            print("""ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping 
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping 
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping 
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping 
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping 
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping 
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping""")
+
+            print("""ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping 
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping 
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping 
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping 
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping 
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping 
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping""")
+
+            print("""ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping 
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping 
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping 
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping 
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping 
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping 
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping""")
+
+            print("""ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping 
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping 
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping 
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping 
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping 
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping 
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping""")
+
+            print("""ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping 
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping 
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping 
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping 
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping 
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping 
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping""")
+
+            print("""ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping 
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping 
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping 
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping 
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping 
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping 
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping""")
+
+            print("""ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping 
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping 
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping 
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping 
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping 
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping 
+            ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping ping""")
+
             problems = dict_from_prefix("problem", data)
             environment_type = data.get("environment_type", "")
             environment_parameters = dict_from_prefix("envparams", data).get(environment_type, {})
@@ -127,7 +220,7 @@ class EditTaskPage(INGIniousAdminPage):
                 data["problems"] = OrderedDict([(key, self.parse_problem(val))
                                                 for key, val in sorted(iter(problems.items()), key=lambda x: int(x[1]['@order']))])
 
-            if problems is None:
+            if variables is None:
                 data["variables"] = OrderedDict([])
             else:
                 data["variables"] = OrderedDict([(key, val)
