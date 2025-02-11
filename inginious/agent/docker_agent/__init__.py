@@ -377,13 +377,6 @@ class DockerAgent(Agent):
         else:
             os.mkdir(taskset_common_student_path)
 
-        file_path = task_path + "/" + task_fs.list()[0]
-
-        with open(file_path, 'r') as file:
-            content = file.read()
-
-        self._logger.info(content)
-
         # Run the container
         try:
             container_id = self._docker.sync.create_container(environment, enable_network, mem_limit, task_path,

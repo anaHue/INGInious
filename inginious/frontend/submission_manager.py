@@ -200,6 +200,10 @@ class WebAppSubmissionManager:
             inputdata["@username"] = username
             inputdata["@email"] = self._user_manager.session_email()
             inputdata["@lang"] = self._user_manager.session_language()
+
+            for key, variable_dict in task.get_variables().items():
+                inputdata["$"+variable_dict.get("variable_name")] = variable_dict.get("variable_value")
+
             submission["input"] = self._gridfs.put(bson.BSON.encode(inputdata))
             submission["tests"] = {}  # Be sure tags are reinitialized
             submission["user_ip"] = flask.request.remote_addr
@@ -297,6 +301,9 @@ class WebAppSubmissionManager:
         inputdata["@random"] = states["random"] if "random" in states else []
         inputdata["@state"] = states["state"] if "state" in states else ""
         inputdata["@settings"] = self._user_manager.get_course_user_settings(username, course)
+
+        for key, variable_dict in task.get_variables().items():
+            inputdata["$"+variable_dict.get("variable_name")] = variable_dict.get("variable_value")
 
         # Send LTI information to the client except "consumer_key"
         lti_info = self._user_manager.session_lti_info()
