@@ -200,7 +200,7 @@ class WebAppSubmissionManager:
             inputdata["@email"] = self._user_manager.session_email()
             inputdata["@lang"] = self._user_manager.session_language()
 
-            for key, variable_dict in task.get_variables().items():
+            for key, variable_dict in task.get_variables_dict().items():
                 inputdata["$"+variable_dict.get("variable_name")] = variable_dict.get("variable_value")
 
             submission["input"] = self._gridfs.put(bson.BSON.encode(inputdata))
@@ -300,7 +300,7 @@ class WebAppSubmissionManager:
         inputdata["@random"] = states["random"] if "random" in states else []
         inputdata["@state"] = states["state"] if "state" in states else ""
 
-        for key, variable_dict in task.get_variables().items():
+        for key, variable_dict in task.get_variables_dict().items():
             inputdata["$"+variable_dict.get("variable_name")] = variable_dict.get("variable_value")
 
         # Send LTI information to the client except "consumer_key"
