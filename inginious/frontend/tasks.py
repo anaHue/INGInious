@@ -144,6 +144,10 @@ class Task(object):
         """ Get problems dict contained in this task """
         return self._data["problems"]
 
+    def get_variables_dict(self):
+        """ Get variables dict contained in this task """
+        return self._data["variables"]
+
     def get_environment_parameters(self):
         """ Returns the raw environment parameters, which is a dictionnary that is envtype dependent. """
         return self._environment_parameters
