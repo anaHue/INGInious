@@ -23,7 +23,12 @@ jobs:
       matrix:
         python_version: ["3.10", "3.11", "3.12", "3.13"]
 
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
+    services:
+      mongo:
+        image: mongo
+        ports:
+          - 27017:27017
 
     steps:
 
@@ -38,24 +43,22 @@ jobs:
         run: |
           sudo apt update
           sudo apt-get install -y libtidy5deb1 libzmq3-dev
-          pip3 install coverage==7.6.9 pytest==8.0.0 virtualenv==20.25.0 setuptools==69.1.0\
-                       setuptools-scm==8.0.4
 
       - name: Start services
         run: |
-          sudo systemctl start mongod
           sudo systemctl start docker
 
       - name: Install INGInious
         run: |
           pip3 install .
+          pip3 install .[test]
 
       - name: Launch pytest tests
         run: coverage run --branch -m pytest -v
 
       - name: Launch pytest tests not requiring INGInious modules
         run: |
-          virtualenv env
+          python3 -m venv env
           env/bin/pip3 install jinja2==3.1.3 pytest==8.0.0 coverage==7.4.1
           env/bin/coverage run --branch -m pytest -v utils
 
