@@ -11,8 +11,8 @@ INGInious
     :target: https://github.com/INGInious/INGInious/actions
 .. image:: https://readthedocs.org/projects/inginious/badge/?version=latest
     :target: https://readthedocs.org/projects/inginious/?badge=latest
-.. image:: http://weblate.info.ucl.ac.be/widgets/inginious/-/frontend/svg-badge.svg
-    :target: http://weblate.info.ucl.ac.be/engage/inginious/?utm_source=widget
+.. image:: https://weblate.info.ucl.ac.be/widgets/inginious/-/frontend/svg-badge.svg
+    :target: https://weblate.info.ucl.ac.be/engage/inginious/?utm_source=widget
 
 INGInious is an intelligent grader that allows secured and automated testing of code made by students.
 
