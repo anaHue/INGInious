@@ -2,7 +2,7 @@
 {# more information about the licensing of this file. #}
 
 {% if short %}
-{% set submission_limit = course.get_task_dispenser().get_submission_limit(taskid) %}
+{% set submission_limit = config_item.get_value(dispenser_config.get(taskid,{})) %}
 {{ _("Submission limits") }} :
 
 <span class="submission_limit submission_limit-none" {% if submission_limit != {'amount':-1, 'period':-1} %} style="display:none;" {% endif %}> {{ _("No limitation") }}</span>

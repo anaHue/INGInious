@@ -2,7 +2,7 @@
 {# more information about the licensing of this file. #}
 
 {% if short %}
-{% set categories = course.get_task_dispenser().get_categories(taskid) %}
+{% set categories = config_item.get_value(dispenser_config.get(taskid,{})) %}
 {{_("Categories")}} :
     <span class="categories-span">{{ ','.join(categories) }}</span>
 {% else %}

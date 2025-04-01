@@ -2,7 +2,7 @@
 {# more information about the licensing of this file. #}
 
 {% if short %}
-{% set weight = course.get_task_dispenser().get_weight(taskid) %}
+{% set weight = config_item.get_value(dispenser_config.get(taskid,{})) %}
 {{ _("Grade weight (in comparison to other tasks)") }} : <span>{{ weight }}</span>
 {% else %}
 <div class="mt-3">{{ _("Grade weight (in comparison to other tasks)") }}</div>
