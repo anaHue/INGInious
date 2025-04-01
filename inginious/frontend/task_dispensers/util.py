@@ -360,8 +360,7 @@ def parse_tasks_config(task_list, config_items, data):
     for taskid, structure in data.items():
         try:
             for config_item in config_items:
-                id = config_item.get_id()
-                structure[id] = config_item.get_value(structure)
+                config_item.get_value(structure)
         except Exception as ex:
             raise InvalidTocException("In taskid {} : {}".format(taskid, str(ex)))
 
