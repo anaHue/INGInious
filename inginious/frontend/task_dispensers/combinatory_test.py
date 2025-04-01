@@ -29,14 +29,14 @@ class CombinatoryTest(TableOfContents):
         result = {username: {taskid: AccessibleTime(False) for taskid in taskids} for username in usernames}
         for index, section in enumerate(self._toc):
             task_list = [taskid for taskid in section.get_tasks()
-                         if AccessibleTime(Accessibility.get_value(self._task_config.get(taskid, {}))).after_start()]
+                         if Accessibility.get_value(self._task_config.get(taskid, {})).after_start()]
             amount_questions = int(section.get_config().get("amount", 0))
             for username in usernames:
                 rand = Random("{}#{}#{}".format(username, index, section.get_title()))
                 random_order_choices = task_list.copy()
                 rand.shuffle(random_order_choices)
                 for taskid in random_order_choices[0:amount_questions]:
-                    result[username][taskid] = AccessibleTime(Accessibility.get_value(self._task_config.get(taskid, {})))
+                    result[username][taskid] = Accessibility.get_value(self._task_config.get(taskid, {}))
 
         return result
 
