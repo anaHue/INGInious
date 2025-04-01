@@ -125,11 +125,12 @@ function dispenser_util_add_tasks_to_section(button) {
 
     for (var i = 0; i < selected_tasks.length; i++) {
         warn_before_exit = true;
-        if(existing_task)
+        if(existing_task) {
             content.append($("#task_" + selected_tasks[i] + "_clone").clone().attr("id", 'task_' + selected_tasks[i]));
-            if(!(selected_tasks[i] in dispenser_config))
+            if (!(selected_tasks[i] in dispenser_config))
                 dispenser_config[selected_tasks[i]] = {};
-	else {
+        }
+	    else {
             // Copy and add the new task
             var new_task_clone = $("#new_task_clone").clone();
             new_task_clone.attr("id", 'task_' + selected_tasks[i]);
