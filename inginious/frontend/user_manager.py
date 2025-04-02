@@ -227,7 +227,7 @@ class UserManager:
         self._session["realname"] = user["realname"]
         self._session["language"] = user.get("language", "en")
         self._session["code_indentation"] = user.get("code_indentation", "4")
-        self._session["tos_signed"] = user.get("tos_signed", False)
+        self._session["tos_signed"] = user.get("tos_accepted", False)
         self._session["token"] = None
         if "lti" not in self._session:
             self._session["lti"] = None
@@ -238,10 +238,10 @@ class UserManager:
         self._session["email"] = None
         self._session["username"] = None
         self._session["realname"] = None
-        self._session["code_indentation"] = None
+        self._session["code_indentation"] = "4"
         self._session["token"] = None
         self._session["lti"] = None
-        self._session["tos_signed"] = None
+        self._session["tos_signed"] = False
 
     def create_lti_session(self, user_id, roles, realname, email, course_id, task_id, consumer_key, outcome_service_url,
                            outcome_result_id, tool_name, tool_desc, tool_url, context_title, context_label):
