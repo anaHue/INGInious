@@ -83,6 +83,11 @@ def parse_template(input_filename, output_filename=''):
                     text = data['input'][field]
                 rep = "\n".join([prefix + v + postfix for v in text.splitlines()])
                 template = template.replace("@{0}@{1}@{2}@".format(prefix, displayed_field, postfix), rep)
+
+    for field in data['input']:
+        if field.startswith('$'):
+            value = data['input'][field]
+            template = template.replace(f"@@{field}@@", value)
     
     if output_filename == '':
         output_filename=input_filename
