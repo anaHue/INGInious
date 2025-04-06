@@ -197,7 +197,7 @@ class ContestAdmin(INGIniousAdminPage):
 
     def GET_AUTH(self, courseid):  # pylint: disable=arguments-differ
         """ GET request: simply display the form """
-        course, __ = self.get_course_and_check_rights(courseid)
+        course, __ = self.get_course_and_check_rights(courseid, allow_all_staff=False)
         task_dispenser = course.get_task_dispenser()
         if not task_dispenser.get_id() == Contest.get_id():
             raise NotFound()
@@ -207,7 +207,7 @@ class ContestAdmin(INGIniousAdminPage):
 
     def POST_AUTH(self, courseid):  # pylint: disable=arguments-differ
         """ POST request: update the settings """
-        course, __ = self.get_course_and_check_rights(courseid)
+        course, __ = self.get_course_and_check_rights(courseid, allow_all_staff=False)
         task_dispenser = course.get_task_dispenser()
         if not task_dispenser.get_id() == Contest.get_id():
             raise NotFound()
@@ -275,4 +275,4 @@ def init(plugin_manager, taskset_factory, client, config):  # pylint: disable=un
     plugin_manager.add_hook('course_admin_menu', add_admin_menu)
     plugin_manager.add_hook('header_html', additional_headers)
     plugin_manager.add_hook('course_menu', course_menu)
-    taskset_factory.add_task_dispenser(Contest)
+    course_factory.add_task_dispenser(Contest)

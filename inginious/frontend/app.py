@@ -100,20 +100,24 @@ def _put_configuration_defaults(config):
 
     return config
 
+def get_homepath():
+    """ Returns the URL root. """
+    return flask.request.url_root[:-1]
 
-def get_homepath(ignore_session=False, force_cookieless=False):
+def get_path(*path_parts, force_cookieless=False):
     """
-    :param ignore_session: Ignore the cookieless session_id that should be put in the URL
+    :param path_parts: List of elements in the path to be separated by slashes
     :param force_cookieless: Force the cookieless session; the link will include the session_creator if needed.
     """
     session = flask.session
     request = flask.request
-    if not ignore_session and session.sid is not None and session.cookieless:
-        return request.url_root[:-1] + "/@" + session.sid + "@"
-    elif not ignore_session and force_cookieless:
-        return request.url_root[:-1] + "/@@"
-    else:
-        return request.url_root[:-1]
+    query_delimiter = '&' if path_parts and '?' in path_parts[-1] else '?'
+    path_parts = (get_homepath(), ) + path_parts
+    if session.sid is not None and session.cookieless:
+        return "/".join(path_parts) + f"{query_delimiter}session_id={session.sid}"
+    if force_cookieless:
+        return "/".join(path_parts) + f"{query_delimiter}session_id="
+    return "/".join(path_parts)
 
 
 def _close_app(mongo_client, client):
@@ -177,6 +181,14 @@ def get_app(config):
     available_languages = {"en": "English"}
     available_languages.update(available_translations)
 
+    # available indentation types
+    available_indentation_types = {
+        "2": {"text": "2 spaces", "indent": 2, "indentWithTabs": False},
+        "3": {"text": "3 spaces", "indent": 3, "indentWithTabs": False},
+        "4": {"text": "4 spaces", "indent": 4, "indentWithTabs": False},
+        "tabs": {"text": "tabs", "indent": 4, "indentWithTabs": True},
+    }
+
     l10n_manager = L10nManager()
 
     l10n_manager.translations["en"] = gettext.NullTranslations()  # English does not need translation ;-)
@@ -188,6 +200,7 @@ def get_app(config):
     if config.get("maintenance", False):
         template_helper = TemplateHelper(PluginManager(), None, config.get('use_minified_js', True))
         template_helper.add_to_template_globals("get_homepath", get_homepath)
+        template_helper.add_to_template_globals("get_path", get_path)
         template_helper.add_to_template_globals("pkg_version", __version__)
         template_helper.add_to_template_globals("available_languages", available_languages)
         template_helper.add_to_template_globals("_", _)
@@ -243,7 +256,9 @@ def get_app(config):
     template_helper.add_to_template_globals("_", _)
     template_helper.add_to_template_globals("str", str)
     template_helper.add_to_template_globals("available_languages", available_languages)
+    template_helper.add_to_template_globals("available_indentation_types", available_indentation_types)
     template_helper.add_to_template_globals("get_homepath", get_homepath)
+    template_helper.add_to_template_globals("get_path", get_path)
     template_helper.add_to_template_globals("pkg_version", __version__)
     template_helper.add_to_template_globals("allow_registration", config.get("allow_registration", True))
     template_helper.add_to_template_globals("sentry_io_url", config.get("sentry_io_url"))
@@ -283,7 +298,7 @@ def get_app(config):
     flask_app.register_error_handler(InternalServerError, flask_internalerror)
 
     # Insert the needed singletons into the application, to allow pages to call them
-    flask_app.get_homepath = get_homepath
+    flask_app.get_path = get_path
     flask_app.plugin_manager = plugin_manager
     flask_app.taskset_factory = taskset_factory
     flask_app.course_factory = course_factory
@@ -303,6 +318,7 @@ def get_app(config):
     flask_app.allow_registration = config.get("allow_registration", True)
     flask_app.allow_deletion = config.get("allow_deletion", True)
     flask_app.available_languages = available_languages
+    flask_app.available_indentation_types = available_indentation_types
     flask_app.welcome_page = config.get("welcome_page", None)
     flask_app.terms_page = config.get("terms_page", None)
     flask_app.privacy_page = config.get("privacy_page", None)

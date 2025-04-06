@@ -11,4 +11,4 @@ COPY inginious-agent-mcq .
 RUN --mount=source=.git,target=.git,type=bind \
     pip3 install --no-cache-dir -e .
 
-CMD ["sh", "-c", "python3 inginious-agent-mcq ${BACKEND}"]
+CMD ["sh", "-c", "python3 -m inginious.scripts.agent_mcq ${BACKEND}"]

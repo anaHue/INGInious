@@ -7,7 +7,6 @@ import re
 import flask
 
 from inginious.common.base import dict_from_prefix, id_checker
-from inginious.frontend.user_settings.field_types import FieldTypes
 from inginious.frontend.accessible_time import AccessibleTime
 from inginious.frontend.pages.course_admin.utils import INGIniousAdminPage
 
@@ -36,6 +35,9 @@ class CourseSettingsPage(INGIniousAdminPage):
         course_content['admins'] = list(map(str.strip, data['admins'].split(','))) if data['admins'].strip() else []
         if not self.user_manager.user_is_superadmin() and self.user_manager.session_username() not in course_content['admins']:
             errors.append(_('You cannot remove yourself from the administrators of this course'))
+        course_content['tutors'] = list(map(str.strip, data['tutors'].split(','))) if data['tutors'].strip() else []
+        if len(course_content['tutors']) == 1 and course_content['tutors'][0].strip() == "":
+            course_content['tutors'] = []
 
         course_content['groups_student_choice'] = True if data["groups_student_choice"] == "true" else False
 
@@ -94,6 +96,50 @@ class CourseSettingsPage(INGIniousAdminPage):
         if tag_error is not None:
             errors.append(tag_error)
 
+
+        course_content['allow_unregister'] = True if data["allow_unregister"] == "true" else False
+        course_content['allow_preview'] = True if data["allow_preview"] == "true" else False
+
+        if data["registration"] == "custom":
+            course_content['registration'] = "{}/{}".format(data["registration_start"], data["registration_end"])
+        elif data["registration"] == "true":
+            course_content['registration'] = True
+        else:
+            course_content['registration'] = False
+
+        try:
+            AccessibleTime(course_content['registration'])
+        except:
+            errors.append(_('Invalid registration dates'))
+
+        course_content['registration_password'] = data['registration_password']
+        if course_content['registration_password'] == "":
+            course_content['registration_password'] = None
+
+        course_content['registration_ac'] = data['registration_ac']
+        if course_content['registration_ac'] not in ["None", "username", "binding", "email"]:
+            errors.append(_('Invalid ACL value'))
+        if course_content['registration_ac'] == "None":
+            course_content['registration_ac'] = None
+
+        course_content['registration_ac_accept'] = True if data['registration_ac_accept'] == "true" else False
+        course_content['registration_ac_list'] = [line.strip() for line in data['registration_ac_list'].splitlines()]
+
+
+        course_content['is_lti'] = 'lti' in data and data['lti'] == "true"
+        course_content['lti_url'] = data.get("lti_url", "")
+        course_content['lti_keys'] = dict([x.split(":") for x in data['lti_keys'].splitlines() if x])
+
+        for lti_key in course_content['lti_keys'].keys():
+            if not re.match("^[a-zA-Z0-9]*$", lti_key):
+                errors.append(_("LTI keys must be alphanumerical."))
+
+        course_content['lti_send_back_grade'] = 'lti_send_back_grade' in data and data['lti_send_back_grade'] == "true"
+
+        tag_error = self.define_tags(course, data, course_content)
+        if tag_error is not None:
+            errors.append(tag_error)
+
         course_user_settings = self.define_course_user_settings(data)
         if course_user_settings is not None and not isinstance(course_user_settings, dict):
             errors.append(course_user_settings)
@@ -107,8 +153,7 @@ class CourseSettingsPage(INGIniousAdminPage):
 
     def page(self, course, errors=None, saved=False):
         """ Get all data and display the page """
-        return self.template_helper.render("course_admin/settings.html", course=course, errors=errors, saved=saved,
-                                           field_types=FieldTypes)
+        return self.template_helper.render("course_admin/settings.html", course=course, errors=errors, saved=saved)
 
     def define_tags(self, course, data, course_content):
         tags = self.prepare_datas(data, "tags")
@@ -132,25 +177,6 @@ class CourseSettingsPage(INGIniousAdminPage):
 
         course_content["tags"] = tags
         self.course_factory.update_course_descriptor_content(course.get_id(), course_content)
-
-    def define_course_user_settings(self, data):
-        """Course user settings definition method"""
-        fields = self.prepare_datas(data, "field")
-        if not isinstance(fields, dict):
-            # prepare_datas returned an error
-            return fields
-
-        # Repair fields
-        for field in fields.values():
-            try:
-                field["type"] = int(field["type"])
-            except:
-                return _("Invalid type value: {}").format(field["type"])
-            if not id_checker(field["id"]):
-                return _("Invalid id: {}").format(field["id"])
-
-            del field["id"]
-        return fields
 
     def prepare_datas(self, data, prefix: str):
         # prepare dict

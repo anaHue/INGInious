@@ -112,9 +112,27 @@ function dispenser_util_add_tasks_to_section(button) {
 
     for (var i = 0; i < selected_tasks.length; i++) {
         warn_before_exit = true;
-        content.append($("#task_" + selected_tasks[i] + "_clone").clone().attr("id", 'task_' + selected_tasks[i]));
-        if(!(selected_tasks[i] in dispenser_config))
-            dispenser_config[selected_tasks[i]] = {};
+        if(existing_task) {
+            content.append($("#task_" + selected_tasks[i] + "_clone").clone().attr("id", 'task_' + selected_tasks[i]));
+            if (!(selected_tasks[i] in dispenser_config))
+                dispenser_config[selected_tasks[i]] = {};
+        }
+	    else {
+            // Copy and add the new task
+            var new_task_clone = $("#new_task_clone").clone();
+            new_task_clone.attr("id", 'task_' + selected_tasks[i]);
+            new_task_clone.html(new_task_clone.html().replaceAll("NEWTASKID", selected_tasks[i]));
+            new_task_clone.find(".task_settings").tooltip({"placement": "bottom"})
+            new_task_clone.find(".delete_task").tooltip({"placement": "bottom"})
+            content.append(new_task_clone);
+
+            // Copy and add the new fields
+            var new_modal_clone = $("#edit-modals-template").clone();
+            new_modal_clone.html(new_modal_clone.html().replaceAll("NEWTASKID", selected_tasks[i]));
+            $("#edit-modals").append(new_modal_clone.children(".modal"));
+            $("#edit-modals").trigger("new_task");
+            dispenser_add_task(selected_tasks[i]);
+        }
     }
 
     dispenser_util_content_modified(section);
@@ -134,14 +152,14 @@ function dispenser_util_open_delete_modal(button) {
     }
 }
 
-function dispenser_util_delete_selection() {
+function dispenser_util_delete_selection(keep_files) {
     $(".grouped-actions-task:checked").each(function () {
         let button = $("#task_" + $(this).data("taskid") + " button.delete_task");
-        dispenser_util_delete_task(button, $(this).data("taskid"));
+        dispenser_util_delete_task(button, keep_files, $(this).data("taskid"));
     });
 }
 
-function dispenser_util_delete_section(button) {
+function dispenser_util_delete_section(button, keep_files) {
     const section = $("#" + button.getAttribute('data-target'));
     const parent = section.parent().closest(".sections_list");
     const wipe = $('#delete_section_modal .wipe_tasks').prop("checked");
@@ -191,14 +209,14 @@ function dispenser_toggle_adapt_viewport() {
 }
 
 function dispenser_util_adapt_viewport() {
-    $("#dispenser_structure").removeAttr("style");
+    $("#course_structure").removeAttr("style");
     if($("#compact-view").hasClass("active")) {
         var viewport_height = window.innerHeight;
         var document_height = $("#main-content").innerHeight() + $("#inginious-top").innerHeight();
         var overflow = document_height - viewport_height;
         if (overflow > 0) {
-            $("#dispenser_structure").height($("#dispenser_structure").height() - overflow);
-            $("#dispenser_structure").css("overflow", "auto");
+            $("#course_structure").height($("#course_structure").height() - overflow);
+            $("#course_structure").css("overflow", "auto");
         }
     }
 }
@@ -274,7 +292,7 @@ function dispenser_util_empty_to_tasks(section) {
 
 function dispenser_util_update_section_select() {
     $("#grouped-actions-section-select").find("option").remove();
-    $("#dispenser_structure .section").each(function () {
+    $("#course_structure .section").each(function () {
         let id = this.id;
         let level = $(this).data('level') - 3;
         let title = "-".repeat(level) + " " + $(this).find(".title").first().text().trim();
@@ -384,10 +402,6 @@ function dispenser_util_make_sections_list_sortable(element) {
  *  Submit structure  *
  **********************/
 
-function dispenser_wipe_task(taskid) {
-    dispenser_wiped_tasks.push(taskid);
-}
-
 function dispenser_util_get_sections_list(element) {
     return element.children(".section").map(function (index) {
         const structure = {
@@ -443,6 +457,22 @@ function dispenser_util_get_task_config() {
 function dispenser_util_structure() {
     return JSON.stringify({
         "toc": dispenser_util_get_sections_list($('#dispenser_structure').children(".content")),
+        "config": dispenser_config
+    });
+}
+
+function dispenser_util_get_task_config() {
+    let tasks_config = {};
+    dispenser_util_get_tasks_list($('#course_structure .content')).forEach(function (elem) {
+        tasks_config[elem] = {};
+    });
+
+    return tasks_config;
+}
+
+function dispenser_util_structure() {
+    return JSON.stringify({
+        "toc": dispenser_util_get_sections_list($('#course_structure').children(".content")),
         "config": dispenser_config
     });
 }

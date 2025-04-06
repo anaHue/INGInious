@@ -31,7 +31,7 @@ def get_config(configfile):
     return load_json_or_yaml(configfile)
 
 
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-c", "--config", help="Configuration file", default="")
     parser.add_argument("-v", "--verbose", help="Display more output", action='store_true')
@@ -116,6 +116,15 @@ if __name__ == "__main__":
         database.submissions.create_index([("status", pymongo.ASCENDING)])
         db_version = 16
 
+    if db_version < 17:
+        print("Updating database to db_version 17")
+        database.users.update_many({}, {"$set": {"code_indentation": "4"}})
+        db_version = 17
+
     database.db_version.update_one({}, {"$set": {"db_version": db_version}}, upsert=True)
         
     print("Database up to date")
+
+
+if __name__ == "__main__":
+    main()

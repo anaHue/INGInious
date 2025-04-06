@@ -61,7 +61,7 @@ class BaseTaskPage(object):
             self.user_manager.course_register_user(course, force=True)
 
         if not self.user_manager.course_is_open_to_user(course, username, is_LTI):
-            return handle_course_unavailable(self.cp.app.get_homepath(), self.template_helper, self.user_manager, course)
+            return handle_course_unavailable(self.cp.app.get_path, self.template_helper, self.user_manager, course)
 
         is_staff = self.user_manager.has_admin_rights_on_course(course, username)
 
@@ -98,14 +98,23 @@ class BaseTaskPage(object):
             if userinput["questionid"] not in sinput:
                 raise NotFound()
 
-            if isinstance(sinput[userinput["questionid"]], dict):
-                # File uploaded previously
+            file_data = sinput[userinput["questionid"]]
+            if isinstance(file_data, dict):
+                filename = file_data['filename']
+                file_content = file_data['value']
                 mimetypes.init()
-                mime_type = mimetypes.guess_type(urllib.request.pathname2url(sinput[userinput["questionid"]]['filename']))
-                return Response(response=sinput[userinput["questionid"]]['value'], content_type=mime_type[0])
+                mime_type = mimetypes.guess_type(urllib.request.pathname2url(filename))
+                
+                # Force download for non pdf files
+                if not filename.lower().endswith(".pdf"):
+                    headers = {
+                        'Content-Disposition': f'attachment; filename="{filename}"'
+                    }
+                    return Response(response=file_content, content_type=mime_type[0], headers=headers)
+                
+                return Response(response=file_content, content_type=mime_type[0])
             else:
-                # Other file, download it as text
-                return Response(response=sinput[userinput["questionid"]], content_type='text/plain')
+                return Response(response=file_data, content_type='text/plain')
         else:
             # Generate random inputs and save it into db
             random.seed(str(username if username is not None else "") + taskid + courseid + str(
@@ -129,7 +138,7 @@ class BaseTaskPage(object):
 
             students = [self.user_manager.session_username()]
             if course.get_task_dispenser().get_group_submission(taskid) and not self.user_manager.has_admin_rights_on_course(course, username):
-                group = self.database.groups.find_one({"courseid": courseid,
+                group = self.database.groups.find_one({"courseid": task.get_course_id(),
                                                      "students": self.user_manager.session_username()})
                 if group is not None:
                     students = group["students"]
@@ -141,7 +150,7 @@ class BaseTaskPage(object):
             # Visible tags
             course_tags = course.get_tags()
             visible_tags = [tags for _,tags in course_tags.items() if
-                tags.is_visible_for_student() or self.user_manager.has_admin_rights_on_course(course)]
+                tags.is_visible_for_student() or self.user_manager.has_staff_rights_on_course(course)]
 
             # Problem dict
             pdict = {problem.get_id(): problem.get_type() for problem in task.get_problems()}
@@ -161,7 +170,7 @@ class BaseTaskPage(object):
 
         course = self.course_factory.get_course(courseid)
         if not self.user_manager.course_is_open_to_user(course, username, isLTI):
-            return handle_course_unavailable(self.cp.app.get_homepath(), self.template_helper, self.user_manager, course)
+            return handle_course_unavailable(self.cp.app.get_path, self.template_helper, self.user_manager, course)
 
         is_admin = self.user_manager.has_admin_rights_on_course(course, username)
 
@@ -174,7 +183,7 @@ class BaseTaskPage(object):
         userinput = flask.request.form
         if "@action" in userinput and userinput["@action"] == "submit":
             # Verify rights
-            if not self.user_manager.task_can_user_submit(course, task, username, lti=isLTI):
+            if not self.user_manager.task_can_user_submit(task, username, lti=isLTI):
                 return json.dumps({"status": "error", "title": _("Error"), "text": _("You are not allowed to submit for this task.")})
 
             # Retrieve input random and check still valid
@@ -214,7 +223,7 @@ class BaseTaskPage(object):
 
             # Start the submission
             try:
-                submissionid, oldsubids = self.submission_manager.add_job(course, task, task_input, course.get_task_dispenser(), debug)
+                submissionid, oldsubids = self.submission_manager.add_job(task, task_input, course.get_task_dispenser(), debug)
                 return Response(content_type='application/json', response=json.dumps({
                     "status": "ok", "submissionid": str(submissionid), "remove": oldsubids,
                     "text": _("<b>Your submission has been sent...</b>")
@@ -399,7 +408,7 @@ class TaskPageStaticDownload(INGIniousPage):
         try:
             course = self.course_factory.get_course(courseid)
             if not self.user_manager.course_is_open_to_user(course):
-                return handle_course_unavailable(self.app.get_homepath(), self.template_helper, self.user_manager, course)
+                return handle_course_unavailable(self.cp.app.get_path, self.template_helper, self.user_manager, course)
 
             path_norm = posixpath.normpath(urllib.parse.unquote(path))
 

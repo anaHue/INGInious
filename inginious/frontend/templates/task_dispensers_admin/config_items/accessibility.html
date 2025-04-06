@@ -2,7 +2,7 @@
 {# more information about the licensing of this file. #}
 
 {% if short %}
-    {% set at = element.get_task_dispenser().get_accessibility(taskid, user_manager.session_username()) %}
+    {% set at = config_item.get_value(dispenser_config.get(taskid,{})) %}
     {{_("Accessibility")}} :
     <span class="accessibility accessibility-never" {% if not at.is_never_accessible() %} style="display: none;" {% endif %}>{{_("Never")}}</span>
     <span class="accessibility accessibility-always" {% if not at.is_always_accessible() %} style="display: none;" {% endif %}>{{_("Always")}}</span>

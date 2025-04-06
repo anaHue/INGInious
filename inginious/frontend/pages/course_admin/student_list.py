@@ -271,7 +271,7 @@ class CourseStudentListPage(INGIniousAdminPage):
 
                     # update list of students and tutors of the course.
                     new_students = list(set(stud_list).union(set(course_students)))
-                    new_tutors = list(set(course.get_admins()).union(set(course_tutors)))
+                    new_tutors = list(set(course.get_tutors()).union(set(course_tutors)))
 
                     self.database.courses.update_one({"_id": courseid}, {"$set": {"students": new_students,
                                                                                   "tutors": new_tutors}})
@@ -288,7 +288,7 @@ class CourseStudentListPage(INGIniousAdminPage):
                                                                {"$set": {"students": audience["students"],
                                                                          "tutors": audience["tutors"]}})
 
-                active_tab = "tab_audiences"
+            active_tab = "tab_audiences"
         except Exception as e:
             msg["audiences"] = _('An error occurred while parsing the data.')
             error["audiences"] = True

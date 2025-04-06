@@ -16,7 +16,7 @@ from flask import redirect
 from werkzeug.exceptions import NotFound
 
 from inginious.frontend.tasks import _migrate_from_v_0_6
-from inginious.frontend.pages.taskset_admin.utils import INGIniousAdminPage
+from inginious.frontend.pages.course_admin.utils import INGIniousAdminPage
 
 from inginious.common.base import dict_from_prefix, id_checker
 from inginious.common.exceptions import TaskNotFoundException
@@ -63,7 +63,7 @@ class EditTaskPage(INGIniousAdminPage):
                                            contains_is_html=self.contains_is_html(task_data),
                                            current_filetype=current_filetype,
                                            available_filetypes=available_filetypes,
-                                           file_list=CourseTaskFiles.get_task_filelist(self.task_factory, taskset, taskid),
+                                           file_list=CourseTaskFiles.get_task_filelist(self.task_factory, courseid, taskid),
                                            additional_tabs=additional_tabs)
 
     @classmethod
@@ -81,12 +81,12 @@ class EditTaskPage(INGIniousAdminPage):
         del problem_content["@order"]
         return self.task_factory.get_problem_types().get(problem_content["type"]).parse_problem(problem_content)
 
-    def POST_AUTH(self, tasksetid, taskid):  # pylint: disable=arguments-differ
+    def POST_AUTH(self, courseid, taskid):  # pylint: disable=arguments-differ
         """ Edit a task """
         if not id_checker(taskid) or not id_checker(tasksetid):
             raise NotFound(description=_("Invalid taskset/task id"))
 
-        __, __ = self.get_taskset_and_check_rights(tasksetid)
+        __, __ = self.get_course_and_check_rights(courseid, allow_all_staff=False)
         data = flask.request.form.copy()
         data["task_file"] = flask.request.files.get("task_file")
 

@@ -6,11 +6,11 @@
 {% for section in sections %}
     {% if section.is_empty() %}
         {% with id="section_" + offset + "_" + (loop.index | string), title=section.get_title(), config=section.get_config(), level=level, hidden=False, display_subsections=False %}
-            {% include "task_dispensers_admin/empty_section.html" %}
+            {% include "course_admin/task_dispensers/empty_section.html" %}
         {% endwith %}
     {% elif section.is_terminal() %}
         {% with id="section_" + offset + "_" + (loop.index | string) %}
-            {% include "task_dispensers_admin/task_list.html" %}
+            {% include "course_admin/task_dispensers/task_list.html" %}
         {% endwith %}
     {% else %}
         <div id="section_{{ offset}}_{{ loop.index }}" class="section sections_list mb-4" data-level="{{level}}">
@@ -33,7 +33,7 @@
             {% endif %}
             <div class="content ml-4">
                 {% with sections=section.get_sections_list(),level=level+1, offset=offset + "_" + loop.index | string %}
-                    {% include "task_dispensers_admin/section.html" %}
+                    {% include "course_admin/task_dispensers/section.html" %}
                 {% endwith %}
             </div>
         </div>

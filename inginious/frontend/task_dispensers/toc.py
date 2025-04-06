@@ -3,7 +3,7 @@
 # This file is part of INGInious. See the LICENSE and the COPYRIGHTS files for
 # more information about the licensing of this file.
 import copy
-import inginious
+import json
 from collections import OrderedDict
 
 from functools import reduce
@@ -20,7 +20,7 @@ class TableOfContents(TaskDispenser):
     legacy_fields = {"weight": Weight, "submission_limit": SubmissionLimit, "stored_submissions": SubmissionStorage,
                      "groups": GroupSubmission, "evaluate": EvaluationMode, "accessible": Accessibility, "categories": Categories}
 
-    def __init__(self, task_list_func, dispenser_data, database, element_id):
+    def __init__(self, task_list_func, dispenser_data, database, course_id):
         # Check dispenser data structure
         dispenser_data = dispenser_data or {"toc": {}, "config": {}}
 
@@ -33,7 +33,7 @@ class TableOfContents(TaskDispenser):
         if not isinstance(dispenser_data, dict) or "toc" not in dispenser_data:
             raise Exception("Invalid dispenser data structure")
 
-        TaskDispenser.__init__(self, task_list_func, dispenser_data, database, element_id)
+        TaskDispenser.__init__(self, task_list_func, dispenser_data, database, course_id)
         self._toc = SectionsList(dispenser_data.get("toc", {}))
         self._task_config = dispenser_data.get("config", {})
         parse_tasks_config(self._task_list_func().keys(), self.config_items, self._task_config)
@@ -70,7 +70,7 @@ class TableOfContents(TaskDispenser):
 
     def get_accessibilities(self, taskids, usernames):
         """  Get the accessible time of this task """
-        return {username: {taskid: AccessibleTime(Accessibility.get_value(self._task_config.get(taskid, {})))
+        return {username: {taskid: Accessibility.get_value(self._task_config.get(taskid, {}))
                            for taskid in taskids } for username in usernames}
 
     def get_categories(self, taskid):
@@ -87,7 +87,7 @@ class TableOfContents(TaskDispenser):
         taskids = list(self._task_list_func().keys())
         task_list = self.get_accessibilities(taskids, usernames)
         user_tasks = self._database.user_tasks.find(
-            {"username": {"$in": usernames}, "courseid": self._element_id, "taskid": {"$in": taskids}})
+            {"username": {"$in": usernames}, "courseid": self._course_id, "taskid": {"$in": taskids}})
 
         tasks_weight = {taskid: self.get_weight(taskid) for taskid in taskids}
         tasks_scores = {username: [0.0, 0.0] for username in usernames}
@@ -106,19 +106,15 @@ class TableOfContents(TaskDispenser):
         """ Returns the task dispenser data structure """
         return self._dispenser_data
 
-    def render_edit(self, template_helper, element, task_data, task_errors):
+    def render_edit(self, template_helper, course, task_data, task_errors):
         """ Returns the formatted task list edition form """
         config_fields = {
             "closed": SectionConfigItem(_("Closed by default"), "checkbox", False),
             "hidden_if_empty": SectionConfigItem(_("Hidden if empty"),"checkbox",False)
         }
-
-        taskset = element if isinstance(element, inginious.frontend.tasksets.Taskset) else None
-        course = element if isinstance(element, inginious.frontend.courses.Course) else None
-
-        return template_helper.render("task_dispensers_admin/toc.html", element=element, course=course, taskset=taskset,
-                                      dispenser_structure=self._toc, dispenser_config=self._task_config, tasks=task_data,
-                                      task_errors=task_errors, config_fields=config_fields)
+        return template_helper.render("course_admin/task_dispensers/toc.html", course=course,
+                                      course_structure=self._toc, tasks=task_data, task_errors=task_errors, 
+                                      config_fields=config_fields, dispenser_config=self._task_config)
 
     def render(self, template_helper, course, tasks_data, tag_list, username):
         """ Returns the formatted task list"""
@@ -141,12 +137,10 @@ class TableOfContents(TaskDispenser):
         tasks = self._task_list_func()
         return OrderedDict([(taskid, tasks[taskid]) for taskid in self._toc.get_tasks() if taskid in tasks])
 
-    def has_legacy_tasks(self, ignore_imported=False):
+    def has_legacy_tasks(self):
         """ Checks if the task files contains dispenser settings """
-        if not ignore_imported and self._dispenser_data.get("imported", False):
-            return False
-
         for taskid, task in self._task_list_func().items():
+            test = task.get_dispenser_settings(self.legacy_fields)
             if task.get_dispenser_settings(self.legacy_fields):
                 return True
         return False
@@ -159,5 +153,4 @@ class TableOfContents(TaskDispenser):
                 dispenser_data["config"][taskid] = task.get_dispenser_settings(self.legacy_fields)
             except Exception as e:
                 raise Exception(f"In task {taskid} : {e}")
-        dispenser_data["imported"] = True
         return dispenser_data

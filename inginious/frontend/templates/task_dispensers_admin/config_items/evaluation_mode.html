@@ -2,7 +2,7 @@
 {# more information about the licensing of this file. #}
 
 {% if short %}
-{% set evaluation_value = element.get_task_dispenser().get_evaluation_mode(taskid) %}
+{% set evaluation_value = config_item.get_value(dispenser_config.get(taskid,{})) %}
 {{_("Evaluation submission")}} :
     <span class="evaluation_submission evaluation_submission-best" {% if not evaluation_value == "best" %} style="display: none;" {% endif %}>{{ _("Best submission") }}</span>
     <span class="evaluation_submission evaluation_submission-last" {% if not evaluation_value == "last" %} style="display: none;" {% endif %}>{{ _("Last submission") }}</span>

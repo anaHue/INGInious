@@ -422,11 +422,11 @@ class Installer:
             with tempfile.TemporaryDirectory() as tmpdirname:
                 self._display_info("Downloading the base container source directory...")
                 if "dev" in __version__:
-                    tarball_url = "https://api.github.com/repos/UCL-INGI/INGInious/tarball"
+                    tarball_url = "https://api.github.com/repos/INGInious/INGInious/tarball"
                     containers_version = "dev (github branch master)"
                     dev = True
                 else:
-                    tarball_url = "https://api.github.com/repos/UCL-INGI/INGInious/tarball/v" + __version__
+                    tarball_url = "https://api.github.com/repos/INGInious/INGInious/tarball/v" + __version__
                     containers_version = __version__
                     dev = False
                 self._display_info("Downloading containers for version:" + containers_version)
@@ -568,6 +568,7 @@ class Installer:
                                    "email": email,
                                    "password": UserManager.hash_password(password),
                                    "bindings": {},
+                                   "code_indentation": "4",
                                    "language": "en"})
 
         options["superadmins"].append(username)

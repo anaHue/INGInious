@@ -16,7 +16,18 @@ from inginious.frontend.accessible_time import AccessibleTime
 from inginious.frontend.parsable_text import ParsableText
 from inginious.frontend.user_manager import UserInfo
 from inginious.frontend.task_dispensers.toc import TableOfContents
-from inginious.frontend.tasksets import _migrate_from_v_0_6
+
+
+def _migrate_from_v_0_6(content, task_list):
+    if 'task_dispenser' not in content:
+        content["task_dispenser"] = "toc"
+        if 'toc' in content:
+            content['dispenser_data'] = {"toc": content["toc"]}
+        else:
+            ordered_tasks = OrderedDict(sorted(list(task_list.items()),
+                                               key=lambda t: (int(t[1]._data.get('order', -1)), t[1].get_id())))
+            content['dispenser_data'] = {"toc": [{"id": "tasks-list", "title": _("List of exercises"),
+                                          "rank": 0, "tasks_list": list(ordered_tasks.keys())}], "config": {}}
 
 
 class Course(object):

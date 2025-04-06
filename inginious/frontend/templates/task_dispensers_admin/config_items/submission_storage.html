@@ -2,7 +2,7 @@
 {# more information about the licensing of this file. #}
 
 {% if short %}
-{% set no_stored_submissions = element.get_task_dispenser().get_no_stored_submissions(taskid) %}
+{% set no_stored_submissions = config_item.get_value(dispenser_config.get(taskid,{})) %}
 {{_("Submission storage")}} :
     <span class="submission_storage submission_storage-all_sub" {% if no_stored_submissions != 0 %} style="display: none;" {% endif %}>{{ _("All submissions") }}</span>
     <span class="submission_storage submission_storage-no_stored_submissions" {% if no_stored_submissions == 0 %} style="display: none;" {% endif %}>

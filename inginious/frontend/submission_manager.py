@@ -44,7 +44,7 @@ class WebAppSubmissionManager:
         self._logger = logging.getLogger("inginious.webapp.submissions")
         self._lti_outcome_manager = lti_outcome_manager
 
-    def _job_done_callback(self, submissionid, course, task, result, grade, problems, tests, custom, state, archive, stdout,
+    def _job_done_callback(self, submissionid, task, result, grade, problems, tests, custom, state, archive, stdout,
                            stderr, task_dispenser,  newsub=True):
         """ Callback called by Client when a job is done. Updates the submission in the database with the data returned after the completion of the
         job """
@@ -84,7 +84,7 @@ class WebAppSubmissionManager:
             )
 
             for username in submission["username"]:
-                self._user_manager.update_user_stats(username, course, task, submission, result[0], grade, state, newsub, task_dispenser)
+                self._user_manager.update_user_stats(username, task, submission, result[0], grade, state, newsub, task_dispenser)
 
         # Check for size as it also takes the MongoDB command into consideration
         except pymongo.errors.DocumentTooLarge:
@@ -117,9 +117,10 @@ class WebAppSubmissionManager:
         :param obj: the new document that will be inserted
         """
         username = self._user_manager.session_username()
+        course = task.get_course()
         is_group_task =course.get_task_dispenser().get_group_submission(task.get_id())
 
-        if is_group_task and not self._user_manager.has_admin_rights_on_course(course, username):
+        if is_group_task and not self._user_manager.has_staff_rights_on_course(course, username):
             group = self._database.groups.find_one({"courseid": course.get_id(), "students": username})
             obj.update({"username": group["students"]})
         else:
@@ -144,13 +145,13 @@ class WebAppSubmissionManager:
         # If we are submitting for a group, send the group (user list joined with ",") as username
         if "group" not in [p.get_id() for p in task.get_problems()]:  # do not overwrite
             username = self._user_manager.session_username()
-            if is_group_task and not self._user_manager.has_admin_rights_on_course(course, username):
+            if is_group_task and not self._user_manager.has_staff_rights_on_course(course, username):
                 group = self._database.groups.find_one({"courseid": course.get_id(), "students": username})
                 users = self._database.users.find({"username": {"$in": group["students"]}})
                 inputdata["@username"] = ','.join(group["students"])
                 inputdata["@email"] = ','.join([user["email"] for user in users])
 
-    def _after_submission_insertion(self, course, task, inputdata, debug, submission, submissionid, task_dispenser):
+    def _after_submission_insertion(self, task, inputdata, debug, submission, submissionid, task_dispenser):
         """
                 Called after any new submission is inserted into the database, but before starting the job.  Should be overridden in subclasses.
                 :param task: Task related to the submission

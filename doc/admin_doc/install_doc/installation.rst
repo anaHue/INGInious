@@ -87,7 +87,7 @@ As previously said, INGInious needs some specific packages. Those can simply be 
 
 .. code-block:: bash
 
-    sudo apt install git gcc tidy python3-pip python3-dev python3-venv libzmq3-dev apt-transport-https ca-certificates curl software-properties-common wget gnupg lsb-release
+    sudo apt install git gcc tidy python3-pip python3-dev python3-venv libzmq3-dev apt-transport-https
 
 For Docker and MongoDB, some specific steps are needed:
 
@@ -95,21 +95,23 @@ First, Docker:
 
 .. code-block:: bash
 
+    sudo apt install curl gnupg lsb-release
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
     echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
     sudo apt update
     sudo apt install docker-ce docker-ce-cli
-    docker info
 
 Then, Mongo:
 
 .. code-block:: bash
 
-    curl -fsSL https://www.mongodb.org/static/pgp/server-7.0.asc | sudo gpg -o /usr/share/keyrings/mongodb-server-7.0.gpg --dearmor
-    echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-7.0.gpg ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/7.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-7.0.list
+    wget -qO - https://www.mongodb.org/static/pgp/server-6.0.asc | sudo apt-key add -
+    echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/6.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-6.0.list
     sudo apt update
-    sudo apt install mongodb-org
-    mongosh --eval 'db.runCommand({ connectionStatus: 1 })'
+    wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2_amd64.deb
+    sudo dpkg -i libssl1.1_1.1.1f-1ubuntu2_amd64.deb
+    sudo apt install -y mongodb-org
+
 .. NOTE::
 
     Libssl installation is a temporary fix that is not required for all versions.
@@ -119,12 +121,12 @@ You may also add ``libxmlsec1-dev libltdl-dev`` for the SAML2 auth plugin.
 
 You can now start and enable the ``mongod`` and ``docker`` services:
 
-.. code-block:: bash
+    # systemctl daemon-reload
+    # systemctl start mongod
+    # systemctl enable mongod
+    # systemctl start docker
+    # systemctl enable docker
 
-    systemctl daemon-reload
-    systemctl enable --now docker
-    systemctl enable --now mongod
-    
 
 
 macOS
@@ -150,8 +152,7 @@ The next step is to install `Docker for Mac <https://docs.docker.com/docker-for-
 
 .. _Installpip:
 
-Whatever the distribution, you should make docker available for non-root user:
-``````````````````````````````````````````````````````````````````````````````
+**Whatever the distribution, you should make docker available for non-root user:**
 
 1. Run the ``groupadd`` command below to create a new group called ``docker``. Enter your password to continue running the command.
 
@@ -177,7 +178,14 @@ This command causes your user account to have non-user access.
 Installing INGInious
 --------------------
 
-The recommended setup is to install INGInious via pip from PyPI in a virtual environment.
+To keep a clean distribution, we recommend to work with a virtualenv:
+
+.. code-block:: bash
+
+    python3 -m venv /path/to/venv/INGInious
+    source /path/to/venv/INGInious/bin/activate
+
+The recommended setup is to install INGInious via pip from PyPI.
 This allows you to use the latest supported version.
 ::
 
@@ -482,7 +490,7 @@ You can then add virtual host entries in a ``/etc/httpd/vhosts.d/inginious.conf`
         ServerName my_inginious_domain
         LoadModule wsgi_module /usr/lib64/python3.5/site-packages/mod_wsgi/server/mod_wsgi-py35.cpython-35m-x86_64-linux-gnu.so
 
-        WSGIScriptAlias / "/usr/bin/inginious-webapp"
+        WSGIScriptAlias / "/usr/local/lib/python3.6/dist-packages/inginious/frontend/wsgi/webapp.py"
         WSGIScriptReloading On
 
         Alias /static /usr/lib/python3.6/site-packages/inginious/frontend/static
@@ -502,7 +510,7 @@ You can then add virtual host entries in a ``/etc/httpd/vhosts.d/inginious.conf`
         ServerName my_inginious_domain
         LoadModule wsgi_module /usr/lib64/python3.6/site-packages/mod_wsgi/server/mod_wsgi-py35.cpython-35m-x86_64-linux-gnu.so
 
-        WSGIScriptAlias / "/usr/bin/inginious-webdav"
+        WSGIScriptAlias / "/usr/local/lib/python3.6/dist-packages/inginious/frontend/wsgi/webdav.py"
         WSGIScriptReloading On
 
         <Directory "/usr/bin">
@@ -552,7 +560,7 @@ Add virtual host entries in a `/etc/apache2/sites-available/inginious.conf` file
   ::
 
     <VirtualHost *:80>
-        WSGIScriptAlias / "/usr/local/bin/inginious-webapp"
+        WSGIScriptAlias / "/usr/local/lib/python3.6/dist-packages/inginious/frontend/wsgi/webapp.py"
         WSGIScriptReloading On
 
         Alias /static /usr/local/lib/python3.6/dist-packages/inginious/frontend/static
@@ -573,7 +581,7 @@ Add virtual host entries in a `/etc/apache2/sites-available/inginious.conf` file
 
 
     <VirtualHost *:8080>
-            WSGIScriptAlias / "/usr/local/bin/inginious-webdav"
+            WSGIScriptAlias / "/usr/local/lib/python3.6/dist-packages/inginious/frontend/wsgi/webdav.py"
             WSGIScriptReloading On
 
             <Directory "/usr/local/bin">
