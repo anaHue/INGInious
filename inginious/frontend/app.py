@@ -164,22 +164,6 @@ def get_app(config):
         "sessions", config.get('SESSION_USE_SIGNER', False), True  # config.get('SESSION_PERMANENT', True)
     )
 
-    # Init gettext
-    available_translations = {
-        "de": "Deutsch",
-        "el": "ελληνικά",
-        "es": "Español",
-        "fr": "Français",
-        "he": "עִבְרִית",
-        "nl": "Nederlands",
-        "nb_NO": "Norsk (bokmål)",
-        "pt": "Português",
-        "vi": "Tiếng Việt"
-    }
-
-    available_languages = {"en": "English"}
-    available_languages.update(available_translations)
-
     # available indentation types
     available_indentation_types = {
         "2": {"text": "2 spaces", "indent": 2, "indentWithTabs": False},
@@ -187,14 +171,6 @@ def get_app(config):
         "4": {"text": "4 spaces", "indent": 4, "indentWithTabs": False},
         "tabs": {"text": "tabs", "indent": 4, "indentWithTabs": True},
     }
-
-    l10n_manager = L10nManager()
-
-    l10n_manager.translations["en"] = gettext.NullTranslations()  # English does not need translation ;-)
-    for lang in available_translations.keys():
-        l10n_manager.translations[lang] = gettext.translation('messages', get_root_path() + '/frontend/i18n', [lang])
-
-    builtins.__dict__['_'] = l10n_manager.gettext
 
     if config.get("maintenance", False):
         template_helper = TemplateHelper(PluginManager(), None, config.get('use_minified_js', True))
@@ -247,6 +223,30 @@ def get_app(config):
     register_utils(database, user_manager, template_helper)
 
     is_tos_defined = config.get("privacy_page", "") and config.get("terms_page", "")
+
+    # Init gettext
+    available_translations = {
+        "de": "Deutsch",
+        "el": "ελληνικά",
+        "es": "Español",
+        "fr": "Français",
+        "he": "עִבְרִית",
+        "nl": "Nederlands",
+        "nb_NO": "Norsk (bokmål)",
+        "pt": "Português",
+        "vi": "Tiếng Việt"
+    }
+
+    available_languages = {"en": "English"}
+    available_languages.update(available_translations)
+
+    l10n_manager = L10nManager(user_manager)
+
+    l10n_manager.translations["en"] = gettext.NullTranslations()  # English does not need translation ;-)
+    for lang in available_translations.keys():
+        l10n_manager.translations[lang] = gettext.translation('messages', get_root_path() + '/frontend/i18n', [lang])
+
+    builtins.__dict__['_'] = l10n_manager.gettext
 
     # Init web mail
     mail.init_app(flask_app)

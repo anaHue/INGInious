@@ -179,9 +179,9 @@ class UserManager:
         """ Returns the oauth state for login """
         return self._session.setdefault("auth_storage", {})
 
-    def session_language(self):
+    def session_language(self, default="en"):
         """ Returns the current session language """
-        return self._session.get("language", "en")
+        return self._session.get("language", default)
 
     def session_code_indentation(self):
         """ Returns the current session code indentation """

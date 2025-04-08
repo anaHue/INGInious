@@ -50,7 +50,7 @@ class INGIniousPage(MethodView):
         """ Checks for language. """
         if "lang" in flask.request.args and flask.request.args["lang"] in self.app.l10n_manager.translations.keys():
             self.user_manager.set_session_language(flask.request.args["lang"])
-        elif "language" not in flask.session:
+        elif not self.user_manager.session_language(default=None):
             best_lang = flask.request.accept_languages.best_match(self.app.l10n_manager.translations.keys(),
                                                                   default="en")
             self.user_manager.set_session_language(best_lang)
