@@ -15,7 +15,7 @@
             <li class="breadcrumb-item"><a href="{{get_path('course', course.get_id())}}">{{ course.get_name(user_manager.session_language()) }}</a></li>
             <li class="breadcrumb-item"><a href="{{get_path('admin', course.get_id())}}" title="{{ _('Administration') }}" data-toggle="tooltip" data-placement="bottom">
                 <i class="fa fa-user-secret"></i></a></li>
-            <li class="breadcrumb-item active"><a href="#"><i class="fa fa-cog"></i> {{_("Course settings")}} <span class="sr-only">{{ _("(current)") }}</span></a></li>
+            <li class="breadcrumb-item active"><a href="#"><i class="fa fa-cogs"></i> {{_("Course settings")}} <span class="sr-only">{{ _("(current)") }}</span></a></li>
         </ol>
     </nav>
 {% endblock %}
@@ -37,16 +37,16 @@
         <div class="card-header">
             <ul class="nav nav-tabs card-header-tabs">
               <li class="nav-item">
-                <a class="nav-link active" data-toggle="tab" href="#base">{{ _("Base") }}</a>
+                <a class="nav-link active" data-toggle="tab" href="#base"><i class="fa fa-gear fa-fw"></i> {{ _("Base") }}</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" data-toggle="tab" href="#accessibility">{{ _("Accessibility") }}</a>
+                <a class="nav-link" data-toggle="tab" href="#accessibility"><i class="fa fa-shield fa-fw"></i> {{ _("Accessibility") }}</a>
               </li>
               <li class="nav-item" id="lti-nav-item">
-                <a class="nav-link" data-toggle="tab" href="#tab_lti">{{ _("LTI") }}</a>
+                <a class="nav-link" data-toggle="tab" href="#tab_lti"><i class="fa fa-external-link-square fa-fw"></i> {{ _("LTI") }}</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" data-toggle="tab" href="#tags_tab">{{ _("Tags") }}</a>
+                <a class="nav-link" data-toggle="tab" href="#tags_tab"><i class="fa fa-tags fa-fw"></i> {{ _("Tags") }}</a>
               </li>
             </ul>
         </div>
