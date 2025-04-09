@@ -53,49 +53,34 @@ class LTIBindPage(INGIniousAuthPage):
     def is_lti_page(self):
         return False
 
-    def fetch_lti_data(self, session_id):
-        # TODO : Flask session interface does not allow to open a specific session
-        # It could be worth putting these information outside of the session dict
-        sess = self.database.lti_sessions.find_one({"session_id": session_id})
-        if sess:
-            return session_id, sess["lti"]
-        else:
-            return KeyError()
-
-    def GET_AUTH(self):
-        input_data = flask.request.args
-        if "session_id" not in input_data:
-            return self.template_helper.render("lti_bind.html", success=False, session_id="",
+    def _get_lti_session_data(self):
+        if not self.user_manager.session_is_lti():
+            return self.template_helper.render("lti_bind.html", success=False,
                                                data=None, error=_("Missing LTI session id"))
 
-        try:
-            cookieless_session_id, data = self.fetch_lti_data(input_data["session_id"])
-        except KeyError:
-            return self.template_helper.render("lti_bind.html", success=False, session_id="",
-                                               data=None, error=_("Invalid LTI session id"))
+        data = self.user_manager.session_lti_info()
+        if data is None:
+            return None, self.template_helper.render("lti_bind.html", success=False,
+                                                     data=None, error=_("Invalid LTI session id"))
+        return data, None
 
-        return self.template_helper.render("lti_bind.html", success=False,
-                                           session_id=cookieless_session_id, data=data, error="")
+    def GET_AUTH(self):
+        data, error = self._get_lti_session_data()
+        if error:
+            return error
+        return self.template_helper.render("lti_bind.html", success=False, data=data, error="")
 
     def POST_AUTH(self):
-        input_data = flask.request.args
-        if "session_id" not in input_data:
-            return self.template_helper.render("lti_bind.html",success=False, session_id="",
-                                               data= None, error=_("Missing LTI session id"))
-
-        try:
-            cookieless_session_id, data = self.fetch_lti_data(input_data["session_id"])
-        except KeyError:
-            return self.template_helper.render("lti_bind.html", success=False, session_id="",
-                                               data=None, error=_("Invalid LTI session id"))
+        data, error = self._get_lti_session_data()
+        if error:
+            return error
 
         try:
             course = self.course_factory.get_course(data["task"][0])
             if data["consumer_key"] not in course.lti_keys().keys():
                 raise Exception()
         except:
-            return self.template_helper.render("lti_bind.html", success=False, session_id="",
-                                               data=None, error=_("Invalid LTI data"))
+            return self.template_helper.render("lti_bind.html", success=False, data=None, error=_("Invalid LTI data"))
 
         if data:
             user_profile = self.database.users.find_one({"username": self.user_manager.session_username()})
@@ -114,13 +99,10 @@ class LTIBindPage(INGIniousAuthPage):
                                  data["task"][0],
                                  data["consumer_key"],
                                  user_profile.get("ltibindings", {}).get(data["task"][0], {}).get(data["consumer_key"], ""))
-                return self.template_helper.render("lti_bind.html", success=False,
-                                                   session_id=cookieless_session_id,
-                                                   data=data,
+                return self.template_helper.render("lti_bind.html", success=False, data=data,
                                                    error=_("Your account is already bound with this context."))
 
-        return self.template_helper.render("lti_bind.html", success=True,
-                                           session_id=cookieless_session_id, data=data, error="")
+        return self.template_helper.render("lti_bind.html", success=True, data=data, error="")
 
 
 class LTILoginPage(INGIniousPage):
