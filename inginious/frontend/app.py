@@ -103,19 +103,15 @@ def get_homepath():
     """ Returns the URL root. """
     return flask.request.url_root[:-1]
 
-def get_path(*path_parts, force_cookieless=False):
+def get_path(*path_parts):
     """
     :param path_parts: List of elements in the path to be separated by slashes
-    :param force_cookieless: Force the cookieless session; the link will include the session_creator if needed.
     """
-    session = flask.session
-    request = flask.request
-    query_delimiter = '&' if path_parts and '?' in path_parts[-1] else '?'
+    lti_session_id = flask.request.args.get('session_id', flask.g.get('lti_session_id'))
     path_parts = (get_homepath(), ) + path_parts
-    if session.sid is not None and session.cookieless:
-        return "/".join(path_parts) + f"{query_delimiter}session_id={session.sid}"
-    if force_cookieless:
-        return "/".join(path_parts) + f"{query_delimiter}session_id="
+    if lti_session_id:
+        query_delimiter = '&' if path_parts and '?' in path_parts[-1] else '?'
+        return "/".join(path_parts) + f"{query_delimiter}session_id={lti_session_id}"
     return "/".join(path_parts)
 
 
@@ -163,6 +159,8 @@ def get_app(config):
         mongo_client, config.get('mongo_opt', {}).get('database', 'INGInious'),
         "sessions", config.get('SESSION_USE_SIGNER', False), True  # config.get('SESSION_PERMANENT', True)
     )
+
+    flask.request_finished.connect(UserManager._lti_session_save, flask_app)
 
     # available indentation types
     available_indentation_types = {

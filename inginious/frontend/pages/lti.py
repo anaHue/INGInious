@@ -9,6 +9,7 @@ from werkzeug.exceptions import Forbidden, NotFound, MethodNotAllowed
 from inginious.frontend.lti_request_validator import LTIValidator
 from inginious.frontend.pages.utils import INGIniousPage, INGIniousAuthPage
 from itsdangerous import want_bytes
+from bson import ObjectId
 
 from inginious.common import exceptions
 from inginious.frontend.lti_tool_provider import LTIWebPyToolProvider
@@ -55,12 +56,11 @@ class LTIBindPage(INGIniousAuthPage):
     def fetch_lti_data(self, session_id):
         # TODO : Flask session interface does not allow to open a specific session
         # It could be worth putting these information outside of the session dict
-        sess = self.database.sessions.find_one({"_id": session_id})
+        sess = self.database.lti_sessions.find_one({"session_id": session_id})
         if sess:
-            cookieless_session = self.app.session_interface.serializer.loads(want_bytes(sess['data']))
+            return session_id, sess["lti"]
         else:
             return KeyError()
-        return session_id, cookieless_session["lti"]
 
     def GET_AUTH(self):
         input_data = flask.request.args
@@ -221,7 +221,8 @@ class LTILaunchPage(INGIniousPage):
             context_title = post_input.get('context_title', 'N/A')
             context_label = post_input.get('context_label', 'N/A')
 
-            session_id = self.user_manager.create_lti_session(user_id, roles, realname, email, courseid, taskid, consumer_key,
+            session_id = str(ObjectId())
+            self.user_manager.create_lti_session(session_id, user_id, roles, realname, email, courseid, taskid, consumer_key,
                                                               lis_outcome_service_url, outcome_result_id, tool_name, tool_desc, tool_url,
                                                               context_title, context_label)
             loggedin = self.user_manager.attempt_lti_login()
