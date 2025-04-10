@@ -150,7 +150,6 @@ class Task(object):
         """ Get problems dict contained in this task """
         return self._data["problems"]
 
-<<<<<<< HEAD
     def get_course_id(self):
         """ Return the courseid of the course that contains this task """
         return self._course.get_id()
@@ -158,11 +157,10 @@ class Task(object):
     def get_course(self):
         """ Return the course that contains this task """
         return self._course
-=======
+    
     def get_variables_dict(self):
         """ Get variables dict contained in this task """
         return self._data["variables"]
->>>>>>> 34c5de55 (add(variables_debug): added variables meta parameters to debug)
 
     def get_environment_parameters(self):
         """ Returns the raw environment parameters, which is a dictionnary that is envtype dependent. """
